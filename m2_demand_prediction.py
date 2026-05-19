@@ -1,7 +1,6 @@
 # ==========================================================
-# DEMAND‑BASED ROOM PREDICTION
-# UPDATED WITH ML COMPARISON + GRAPHS
-# LOGIC NOT CHANGED
+# DEMAND-BASED ROOM PREDICTION
+# UPDATED WITH ML COMPARISON + REALISTIC MONTHLY ROOM DEMAND
 # ==========================================================
 
 import pandas as pd
@@ -22,15 +21,11 @@ from sklearn.metrics import confusion_matrix, accuracy_score
 df = pd.read_csv("hotel_bookings.csv")
 
 # ----------------------------------------------------------
-# PREPROCESSING (UNCHANGED)
+# PREPROCESSING
 # ----------------------------------------------------------
 df["children"] = df["children"].fillna(0)
 
-df["total_guests"] = (
-    df["adults"] +
-    df["children"] +
-    df["babies"]
-)
+df["total_guests"] = df["adults"] + df["children"] + df["babies"]
 
 df["total_stay"] = (
     df["stays_in_week_nights"] +
@@ -40,11 +35,11 @@ df["total_stay"] = (
 df = df[df["total_stay"] > 0]
 
 # ----------------------------------------------------------
-# MONTH ENCODING (UNCHANGED)
+# MONTH ENCODING
 # ----------------------------------------------------------
 month_order = [
-    "January","February","March","April","May","June",
-    "July","August","September","October","November","December"
+    "January", "February", "March", "April", "May", "June",
+    "July", "August", "September", "October", "November", "December"
 ]
 
 df["arrival_date_month"] = pd.Categorical(
@@ -54,7 +49,7 @@ df["arrival_date_month"] = pd.Categorical(
 ).codes + 1
 
 # ----------------------------------------------------------
-# ROOM TYPE PROXY (UNCHANGED)
+# ROOM TYPE PROXY
 # ----------------------------------------------------------
 def room_type_proxy(x):
     if x < 80:
@@ -67,14 +62,11 @@ def room_type_proxy(x):
 df["room_num"] = df["adr"].apply(room_type_proxy)
 
 # ----------------------------------------------------------
-# DEMAND LEVEL CREATION (UNCHANGED)
+# DEMAND LEVEL CREATION
 # ----------------------------------------------------------
-monthly = (
-    df.groupby("arrival_date_month")["total_guests"]
-    .sum()
-)
+monthly = df.groupby("arrival_date_month")["total_guests"].sum()
 
-low  = monthly.quantile(0.33)
+low = monthly.quantile(0.33)
 high = monthly.quantile(0.66)
 
 def demand_label(x):
@@ -90,7 +82,7 @@ df["Demand_Level"] = df["arrival_date_month"].map(
 )
 
 # ----------------------------------------------------------
-# FEATURES (UNCHANGED)
+# FEATURES
 # ----------------------------------------------------------
 X = df[[
     "arrival_date_month",
@@ -103,7 +95,7 @@ X = df[[
 y = df["Demand_Level"]
 
 # ----------------------------------------------------------
-# TRAIN TEST SPLIT (UNCHANGED)
+# TRAIN TEST SPLIT
 # ----------------------------------------------------------
 X_train, X_test, y_train, y_test = train_test_split(
     X, y,
@@ -114,24 +106,13 @@ X_train, X_test, y_train, y_test = train_test_split(
 # ==========================================================
 # MODELS TRAINING
 # ==========================================================
-
-# 1️⃣ Random Forest (YOUR ORIGINAL MODEL)
-rf_model = RandomForestClassifier(
-    n_estimators=200,
-    random_state=42
-)
+rf_model = RandomForestClassifier(n_estimators=200, random_state=42)
 rf_model.fit(X_train, y_train)
 
-# 2️⃣ Decision Tree
-dt_model = DecisionTreeClassifier(
-    random_state=42
-)
+dt_model = DecisionTreeClassifier(random_state=42)
 dt_model.fit(X_train, y_train)
 
-# 3️⃣ Logistic Regression
-lr_model = LogisticRegression(
-    max_iter=1000
-)
+lr_model = LogisticRegression(max_iter=1000)
 lr_model.fit(X_train, y_train)
 
 # ----------------------------------------------------------
@@ -148,14 +129,13 @@ rf_acc = accuracy_score(y_test, rf_pred)
 dt_acc = accuracy_score(y_test, dt_pred)
 lr_acc = accuracy_score(y_test, lr_pred)
 
-print("Random Forest Accuracy :", rf_acc)
-print("Decision Tree Accuracy :", dt_acc)
-print("Logistic Regression Accuracy :", lr_acc)
+print("Random Forest Accuracy:", rf_acc)
+print("Decision Tree Accuracy:", dt_acc)
+print("Logistic Regression Accuracy:", lr_acc)
 
 # ==========================================================
 # CONFUSION MATRICES
 # ==========================================================
-
 models_preds = [
     ("Decision Tree", dt_pred),
     ("Random Forest", rf_pred),
@@ -163,95 +143,86 @@ models_preds = [
 ]
 
 for name, pred in models_preds:
-
     cm = confusion_matrix(y_test, pred)
 
-    plt.figure(figsize=(5,4))
+    plt.figure(figsize=(5, 4))
     sns.heatmap(
         cm,
         annot=True,
         fmt="d",
         cmap="Blues",
-        xticklabels=["Low","Medium","High"],
-        yticklabels=["Low","Medium","High"]
+        xticklabels=["Low", "Medium", "High"],
+        yticklabels=["Low", "Medium", "High"]
     )
 
-    plt.title(f"{name} – Confusion Matrix")
+    plt.title(f"{name} - Confusion Matrix")
     plt.xlabel("Predicted")
     plt.ylabel("Actual")
     plt.show()
 
 # ==========================================================
-# PERFORMANCE COMPARISON BAR CHART
+# MODEL PERFORMANCE COMPARISON
 # ==========================================================
+model_names = ["Decision Tree", "Random Forest", "Logistic Regression"]
+accuracies = [dt_acc, rf_acc, lr_acc]
 
-model_names = [
-    "Decision Tree",
-    "Random Forest",
-    "Logistic Regression"
-]
-
-accuracies = [
-    dt_acc,
-    rf_acc,
-    lr_acc
-]
-
-plt.figure(figsize=(8,5))
+plt.figure(figsize=(8, 5))
 
 bars = plt.bar(
     model_names,
     accuracies,
-    color=["orange","green","blue"]
+    color=["orange", "green", "blue"]
 )
 
 plt.title("Model Performance Comparison")
 plt.ylabel("Accuracy")
-plt.ylim(0,1)
+plt.ylim(0, 1)
 
 for bar in bars:
     yval = bar.get_height()
     plt.text(
-        bar.get_x() + 0.25,
+        bar.get_x() + bar.get_width() / 2,
         yval + 0.01,
-        round(yval,3)
+        round(yval, 3),
+        ha="center"
     )
 
 plt.show()
 
 # ==========================================================
-# MONTH vs ROOMS GRAPH
-# (Guests + Stay proxy as you requested)
+# MONTH vs AVERAGE ROOMS BOOKED PER DAY
 # ==========================================================
 
-df["rooms_proxy"] = (
-    df["total_guests"] *
-    df["total_stay"]
-)
+monthly_bookings = df.groupby("arrival_date_month").size()
 
-monthly_rooms = (
-    df.groupby("arrival_date_month")["rooms_proxy"]
-    .sum()
-)
+num_years = df["arrival_date_year"].nunique()
 
-plt.figure(figsize=(10,5))
+avg_monthly_bookings = monthly_bookings / num_years
+
+rooms_per_day = avg_monthly_bookings / 30
+
+plt.figure(figsize=(10, 5))
 
 plt.plot(
-    monthly_rooms.index,
-    monthly_rooms.values,
+    rooms_per_day.index,
+    rooms_per_day.values,
     marker="o",
     linewidth=3
 )
 
-plt.title("Month vs Number of Rooms Demand")
+plt.title("Month vs Average Rooms Booked Per Day")
 plt.xlabel("Month")
-plt.ylabel("Total Rooms (Proxy)")
+plt.ylabel("Average Rooms Booked Per Day")
+plt.xticks(range(1, 13))
 plt.grid(True)
+
+plt.savefig("monthly_demand_graph.png")
 plt.show()
 
 # ==========================================================
-# SAVE ORIGINAL MODEL (UNCHANGED)
+# SAVE RANDOM FOREST MODEL
 # ==========================================================
 joblib.dump(rf_model, "m2_demand_model.pkl")
 
 print("✅ Model saved as m2_demand_model.pkl")
+print("✅ Monthly demand graph saved as monthly_demand_graph.png")
