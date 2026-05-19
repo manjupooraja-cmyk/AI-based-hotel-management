@@ -45,11 +45,11 @@ This project provides a smart AI-based solution for hotel management.
 
 ---
 
-# 📂 Dataset
+## 📂 Dataset
 
-- Trip Advisor Hotel Reviews Dataset  
-- Hotel Bookings Dataset
+- [Hotel Bookings Dataset](https://www.kaggle.com/datasets/ahmedsafwatgb20/hotel-bookingscsv)
 
+- [Trip Advisor Hotel Reviews Dataset](https://www.kaggle.com/datasets/andrewmvd/trip-advisor-hotel-reviews)
 ---
 
 # ⚙️ How to Run the Project
