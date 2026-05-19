@@ -84,21 +84,15 @@ python -m streamlit run app1.py
 
 ## 🔹 Room Demand Prediction
 
-```markdown
-![Room Demand Prediction](screenshot/room demand.PNG)
-```
+![Room Demand Prediction](screenshot/room-demand.png)
 
 ## 🔹 Seasonal Pricing Prediction
 
-```markdown
-![Seasonal Pricing Prediction](screenshot/seasonal pricing.PNG)
-```
+![Seasonal Pricing Prediction](screenshot/seasonal-pricing.png)
 
 ## 🔹 Sentiment Analysis
 
-```markdown
-![Sentiment Analysis](screenshot/sentimental analysis.PNG)
-```
+![Sentiment Analysis](screenshot/sentiment-analysis.png)
 
 ---
 
@@ -127,6 +121,6 @@ The system is scalable and suitable for real-world hotel applications.
 
 ---
 
-# ⭐ GitHub Repository
+## ⭐ GitHub Repository
 
-:contentReference[oaicite:0]{index=0}
+https://github.com/K-Maneesha/ML-ai-based-hotel-project
