@@ -110,7 +110,7 @@ python -m streamlit run app1.py
 ## Kanishka P
 ## Harshini Durga V
 ## Maneesha K
-## ManjuMahalakshmi P
+## Manju Mahalakshmi P
 
 ---
 
@@ -123,4 +123,4 @@ The system is scalable and suitable for real-world hotel applications.
 
 ## ⭐ GitHub Repository
 
-https://github.com/K-Maneesha/ML-ai-based-hotel-project
+https://github.com/manjupooraja-cmyk/AI-based-hotel-management
